@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,31 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
-Route::get('/login', function () {
-    return 'Login';
+// routing admin 
+Route::prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return view('/admin/home');
+    })->middleware('auth');
+
+    Route::get('/home', function () {
+        return view('/admin/home');
+    })->middleware('auth');
 });
+
+// routing user
+
+Route::get('/home', function () {
+    return view('home');
+})->middleware('auth');
+
+Route::get('/register', [UserController::class, 'create']);
+Route::post('/register-user', [UserController::class, 'store']);
+
+Route::get('/login', [UserController::class, 'login'])->name('login');
+Route::post('/login-action', [UserController::class, 'loginaction']);
+
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/logout', [UserController::class, 'logout']);
